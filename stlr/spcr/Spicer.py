@@ -1,10 +1,25 @@
 from re import findall
 from jinja2 import Environment, Template
 from os import path, listdir
-from typing import Any
+from typing import Any, Callable
+from functools import wraps
 
 from stlr import Stlr
 from .Types import Spice
+
+def cache_render(func:Callable) -> Callable:
+	cache:dict = {}
+
+	@wraps(func)
+	def wrapper(*args,**kwargs) -> Any:
+		key = (args,frozenset(kwargs.items()))
+		if key in cache:
+			return cache[key]
+		result = func(*args,**kwargs)
+		cache[key] = result
+		return result
+	
+	return wrapper
 
 class Spicer:
 	def __init__(self,app:Stlr,spicer_folder:str|None="spices",cache:bool=True) -> None:
@@ -15,6 +30,7 @@ class Spicer:
 
 		self.cache:bool = cache
 
+	@cache_render
 	def render_template_string(self,template_source:str,**context) -> str:
 		"""
 		Render a Jinja2 template given as a string.
@@ -47,6 +63,7 @@ class Spicer:
 				spice.JS_Aft_File = file.read()
 		return spice
 
+	@cache_render
 	def render_template(self,template_name:str,**context:Any) -> str:
 		"""
 		Renders & patches a template.
@@ -76,6 +93,7 @@ class Spicer:
 
 		return self.patch(html_template,**context)
 
+	# We don't cache .patch() results for RAM consumption concerns and because it's not intended for use in Stlr.
 	def patch(self,rendered:str,**context:Any) -> str:
 		"""
 		Patch up an already-rendered template using Spicer.
