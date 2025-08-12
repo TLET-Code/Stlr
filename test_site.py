@@ -5,6 +5,6 @@ site:Stlr = Stlr(__file__)
 
 @site.route("/",[Method.GET])
 def index():
-    return "Hello!"
+	return "Hello!"
 
 site.run("0.0.0.0",port=8081)

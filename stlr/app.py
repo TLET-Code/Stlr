@@ -1,18 +1,19 @@
-from flask import Flask
-from flask_spicer import Spicer
-
+from http.cookies import SimpleCookie
 from os import path
-
 from typing import Callable
 
 from .Enum import HTTP
+from .spcr import Spicer
 from .router import Router
+from .Interfaces.Built import InMemorySessionStore
+from .Interfaces.Layouts import SessionStore
 
 class Stlr:
 	def __init__(
 			self,
 			import_name:str,
 
+			# Templating
 			web_folder:str="Web",
 			config_folder:str="Config",
 			elements_folder:str="Elements",
@@ -20,6 +21,11 @@ class Stlr:
 			static_folder:str="Static",
 			template_folder:str="Templates",
 			all_in_web_folder:bool=True,
+
+			cache_templates:bool=True,
+
+			# Session
+			session_store:SessionStore=InMemorySessionStore(),
 
 			*args,
 			**kwargs
@@ -31,30 +37,46 @@ class Stlr:
 			robots_folder = path.join(web_folder,robots_folder)
 			static_folder = path.join(web_folder,static_folder)
 			template_folder = path.join(web_folder,template_folder)
+		
+		self.web_folder:str = web_folder
+		self.config_folder:str = config_folder
+		self.elements_folder:str = elements_folder
+		self.robots_folder:str = robots_folder
+		self.static_folder:str = static_folder
+		self.template_folder:str = template_folder
 
-		# TODO: Implement Spicer-like templating with Flask templates.
-		# TODO: Fully remove Flask.
-		self.__flask:Flask = Flask(
-			import_name=import_name,
-			static_folder=static_folder,
-			template_folder=template_folder,
-			*args,
-			**kwargs
-		)
-		self.__spicer:Spicer = Spicer(self.__flask,elements_folder)
+		self.__spicer:Spicer = Spicer(self,elements_folder,cache=cache_templates)
+		self.__session_store = session_store
 
+		self.__SESSION_COOKIE:str = kwargs["session_cookie"] or "_STLR_SESSION"
+		self.__SESSION_COOKIE_EXPIRY:int = kwargs["session_cookie_expiry"] or 3600
+
+		self.render_template = self.__spicer.render_template
+		self.render_template_string = self.__spicer.render_template_string
 		self.router:Router = Router()
-	
-	def route(self,path:str,methods:list[HTTP.Method]=[HTTP.Method.GET]) -> Callable:
-		def decorator(handler:Callable) -> Callable:
-			for method in methods:
-				self.router.add_route(path,handler,method)
-			return handler
-		return decorator
 
 	# imma be honest gang imma not even try to
 	# guess what the types for this shit are
 	def __call__(self,environ,start_response):
+		# cookie goblin
+		cookie_header = environ.get("HTTP_COOKIE","")
+		cookies = SimpleCookie(cookie_header)
+		session_id = cookies.get(self.__SESSION_COOKIE)
+		if session_id:
+			session_id = session_id.value
+		else:
+			session_id = None
+
+		session_data = self.__session_store.load(session_id) if session_id else None
+		if session_data is None:
+			session_id = self.__session_store.generate_session_id()
+			session_data = {}
+		
+		environ["stlr.session"] = session_data
+		self.__session_store.save(session_id,environ["stlr.session"],self.__SESSION_COOKIE_EXPIRY)#type:ignore
+
+
+		# funny handling or something
 		method = environ["REQUEST_METHOD"]
 		path = environ["PATH_INFO"]
 
@@ -69,6 +91,13 @@ class Stlr:
 		headers = [("Content-Type","text/plain")]
 		start_response(status,headers)
 		return [b"Not Found"]
+	
+	def route(self,path:str,methods:list[HTTP.Method]=[HTTP.Method.GET]) -> Callable:
+		def decorator(handler:Callable) -> Callable:
+			for method in methods:
+				self.router.add_route(path,handler,method)
+			return handler
+		return decorator
 
 	def run(self,host:str,port:int=80) -> None:
 		"""
