@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["stlr"]
+
+[project]
+name = "Stlr"
+description = "Stlr is a fast, modular & simple Python web framework."
+readme="README.md"
+license="BSD-3-Clause"
+keywords = ["framework","web","stlr"]
+classifiers = [
+	"Development Status :: 3 - Alpha",
+	"Intended Audience :: Developers",
+	"Programming Language :: Python :: 3.10"
+]
+version = "1.0.0a"
+dependencies = [
+	"jinja2",
+	"python-dotenv"
+]
+requires-python = ">= 3.10"
+authors = [
+	{name="Tato",email="tato@tlet.xyz"}
+]
+maintainers = [
+	{name="Tato",email="tato@tlet.xyz"}
+]
+
+[project.optional-dependencies]
+redis = ["redis"]
+cli = ["click"]
+
+[project.scripts]
+stlr = "stlr.cli:main"
+
+[project.urls]
+Repository = "https://git.tlet.xyz/Tato/Stlr.git"
+Issues = "https://git.tlet.xyz/Tato/Stlr/issues"
+Changelog = "https://git.tlet.xyz/Tato/Stlr/blob/master/CHANGELOG.md"

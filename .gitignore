@@ -2,3 +2,5 @@
 *.pyc
 Testing/flask
 .venv
+build
+*egg-info
