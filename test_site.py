@@ -1,7 +1,7 @@
 from stlr import Stlr
 from stlr.Enum.HTTP import Method
 
-site:Stlr = Stlr(__file__)
+site:Stlr = Stlr()
 
 @site.route("/",[Method.GET])
 def index():

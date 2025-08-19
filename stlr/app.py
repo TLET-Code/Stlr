@@ -11,7 +11,7 @@ from .Interfaces.Layouts import SessionStore
 class Stlr:
 	def __init__(
 			self,
-			import_name:str,
+			#import_name:str,
 
 			# Templating
 			web_folder:str="Web",
