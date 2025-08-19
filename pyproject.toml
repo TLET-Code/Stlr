@@ -5,6 +5,9 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools]
 packages = ["stlr"]
 
+[tool.setuptools.dynamic]
+version = {attr = "stlr.__version__"}
+
 [project]
 name = "Stlr"
 description = "Stlr is a fast, modular & simple Python web framework."
@@ -16,7 +19,7 @@ classifiers = [
 	"Intended Audience :: Developers",
 	"Programming Language :: Python :: 3.10"
 ]
-version = "1.0.0a"
+dynamic = ["version"]
 dependencies = [
 	"jinja2",
 	"python-dotenv"
@@ -34,7 +37,7 @@ redis = ["redis"]
 cli = ["click"]
 
 [project.scripts]
-stlr = "stlr.cli:main"
+stlr = "stlr.cli:cli"
 
 [project.urls]
 Repository = "https://git.tlet.xyz/Tato/Stlr.git"
