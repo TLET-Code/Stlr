@@ -48,8 +48,8 @@ class Stlr:
 		self.__spicer:Spicer = Spicer(self,elements_folder,cache=cache_templates)
 		self.__session_store = session_store
 
-		self.__SESSION_COOKIE:str = kwargs["session_cookie"] or "_STLR_SESSION"
-		self.__SESSION_COOKIE_EXPIRY:int = kwargs["session_cookie_expiry"] or 3600
+		self.__SESSION_COOKIE:str = kwargs.get("session_cookie") or "_STLR_SESSION"
+		self.__SESSION_COOKIE_EXPIRY:int = kwargs.get("session_cookie_expiry") or 3600
 
 		self.render_template = self.__spicer.render_template
 		self.render_template_string = self.__spicer.render_template_string
@@ -99,13 +99,13 @@ class Stlr:
 			return handler
 		return decorator
 
-	def run(self,host:str,port:int=80) -> None:
+	def run(self,host:str="0.0.0.0",port:int=8081) -> None:
 		"""
 		Serves forever. ONLY for development use.
 		"""
 		from wsgiref.simple_server import make_server
 		with make_server(host,port,self) as httpd:
-			print(f"Serving on port {port}...")
+			print(f"Serving on {'*' if host == '0.0.0.0' else host}:{port}")
 			try:
 				httpd.serve_forever()
 			except KeyboardInterrupt:

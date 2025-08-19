@@ -4,7 +4,6 @@ from os import path, listdir
 from typing import Any, Callable
 from functools import wraps
 
-from stlr import Stlr
 from .Types import Spice
 
 def cache_render(func:Callable) -> Callable:
@@ -22,7 +21,7 @@ def cache_render(func:Callable) -> Callable:
 	return wrapper
 
 class Spicer:
-	def __init__(self,app:Stlr,spicer_folder:str|None="spices",cache:bool=True) -> None:
+	def __init__(self,app:"Stlr",spicer_folder:str|None="spices",cache:bool=True) -> None:#type:ignore
 		self.__app = app
 		self.__env = Environment(autoescape=True)
 		self.__spicer_folder:str = spicer_folder if spicer_folder is not None else path.join(str(self.__app.template_folder),path.join("..","spices"))
