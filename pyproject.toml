@@ -20,10 +20,6 @@ classifiers = [
 	"Programming Language :: Python :: 3.10"
 ]
 dynamic = ["version"]
-dependencies = [
-	"jinja2",
-	"python-dotenv"
-]
 requires-python = ">= 3.10"
 authors = [
 	{name="Tato",email="tato@tlet.xyz"}
@@ -31,10 +27,14 @@ authors = [
 maintainers = [
 	{name="Tato",email="tato@tlet.xyz"}
 ]
+dependencies = [
+	"jinja2",
+	"python-dotenv",
+	"click"
+]
 
 [project.optional-dependencies]
 redis = ["redis"]
-cli = ["click"]
 
 [project.scripts]
 stlr = "stlr.cli:cli"
