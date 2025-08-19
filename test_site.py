@@ -7,4 +7,8 @@ site:Stlr = Stlr()
 def index():
 	return "Hello!"
 
-site.run("0.0.0.0",port=8081)
+if __name__ == "__main__":
+	# Running using the cli command
+	# stlr run test_site.py
+	# accomplishes the same behaviour.
+	site.run("0.0.0.0",port=8081)

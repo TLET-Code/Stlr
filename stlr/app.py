@@ -105,7 +105,7 @@ class Stlr:
 		"""
 		from wsgiref.simple_server import make_server
 		with make_server(host,port,self) as httpd:
-			print(f"Serving on {'*' if host == '0.0.0.0' else host}:{port}")
+			print(f"Serving on {'*' if host == '0.0.0.0' else host}:{port}.")
 			try:
 				httpd.serve_forever()
 			except KeyboardInterrupt:
