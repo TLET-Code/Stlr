@@ -19,7 +19,9 @@ def run(project:str,host:str,ip:str,port:int):
 		Serve a Stlr app in development mode forever.
 
 	PROJECT can be in two forms:
+	
 	- main.py        (expects a "site" object)
+
 	- main.py:obj    (imports a custom object instead of "site")
 	"""
 
