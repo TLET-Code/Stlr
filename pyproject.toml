@@ -3,7 +3,7 @@ requires = ["setuptools >= 77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["stlr"]
+packages = { find = { include = ["stlr*"] } }
 
 [tool.setuptools.dynamic]
 version = {attr = "stlr.__version__"}
@@ -30,11 +30,12 @@ maintainers = [
 dependencies = [
 	"jinja2",
 	"python-dotenv",
-	"click"
+	"click",
+	"redis"
 ]
 
-[project.optional-dependencies]
-redis = ["redis"]
+# [project.optional-dependencies]
+# redis = ["redis"]
 
 [project.scripts]
 stlr = "stlr.cli:cli"

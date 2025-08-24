@@ -1,9 +1,8 @@
 # Base
 jinja2
 python-dotenv
+click
 
 # Optional
 ## redis
 redis
-## cli
-click
